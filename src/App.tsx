@@ -11,6 +11,7 @@ function App() {
         <div className="pt-4">
           <h1 className="font-display mb-0">Kirk Steineck</h1>
           <p className="mt-0">stein935@gmail.com</p>
+          <p>Test</p>
         </div>
       </div>
     </>
