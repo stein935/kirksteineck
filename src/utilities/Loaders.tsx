@@ -7,6 +7,7 @@ export interface Page {
   content: {
     text: string;
     type: string;
+    col: number;
   }[];
   heading: string;
   nav: {

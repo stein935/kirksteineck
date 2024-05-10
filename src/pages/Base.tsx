@@ -1,7 +1,7 @@
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Page } from "../utilities/Loaders";
-import Content from "../components/content";
+import Content from "../components/Content";
 import { useLoaderData } from "react-router-dom";
 
 const Base = () => {
@@ -16,7 +16,7 @@ const Base = () => {
           sub_heading={data.sub_heading}
         />
         <div className="container mx-auto px-10">
-          <Content data={data.content} />
+          <Content data={data.content} title={data.title} />
         </div>
         <Footer
           title={data.title}
