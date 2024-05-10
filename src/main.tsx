@@ -1,9 +1,42 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
+import Home from "./pages/Home.tsx";
+import loaders from "./utilities/Loaders";
+import Base from "./pages/Base.tsx";
+import Root from "./pages/Root.tsx";
+// import Error from "./error.tsx";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Root />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+        loader: async () => {
+          return loaders.pageLoader({ coll: "pages", id: "home" });
+        },
+      },
+      {
+        path: "/:title",
+        element: <Base />,
+        loader: async ({ params }) => {
+          return loaders.pageLoader({
+            coll: "pages",
+            id: params.title || "home",
+          });
+        },
+      },
+    ],
+  },
+]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
+    <div className="prose-md prose prose-stone max-w-none antialiased prose-headings:mt-0 prose-headings:font-serif prose-headings:italic">
+      <RouterProvider router={router} />
+    </div>
   </React.StrictMode>,
 );
