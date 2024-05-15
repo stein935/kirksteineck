@@ -7,7 +7,7 @@ interface Props {
   iconId?: string;
   iconVariant?: "solid" | "outline";
   size?: "xs" | "sm" | "md" | "lg" | "xl";
-  type?: "submit";
+  type?: "submit" | "button" | "reset";
   disabled?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   children: string;
@@ -20,15 +20,23 @@ interface Size {
   text: string;
 }
 
-const Button = (props: Props) => {
-  const defaultSize = "md";
+const Button = ({
+  color_1 = "indigo-500",
+  color_2 = "indigo-600",
+  size = "md",
+  iconVariant = "outline",
+  ...props
+}: Props) => {
+  // const {color_1 = "indigo-500", color_2 = "indigo-600", size = "md", iconVariant = "outline", ...restProps } = props;
+
+  // console.log(props);
 
   const buttonSize: { [key: string]: Size } = {
-    xs: { px: "1.5", py: "1", size: "4", text: props.size || defaultSize },
-    sm: { px: "2", py: "1.5", size: "5", text: props.size || defaultSize },
+    xs: { px: "1.5", py: "1", size: "4", text: size },
+    sm: { px: "2", py: "1.5", size: "5", text: size },
     md: { px: "3", py: "2", size: "6", text: "base" },
-    lg: { px: "4", py: "3", size: "7", text: props.size || defaultSize },
-    xl: { px: "5", py: "4", size: "8", text: props.size || defaultSize },
+    lg: { px: "4", py: "3", size: "7", text: size },
+    xl: { px: "5", py: "4", size: "8", text: size },
   };
   const [state, setState] = useState<Size>({
     px: "3",
@@ -40,31 +48,29 @@ const Button = (props: Props) => {
   useEffect(() => {
     setState((state) => ({
       ...state,
-      ...buttonSize[props.size || defaultSize],
+      ...buttonSize[size],
     }));
   }, []);
   return (
-    <>
-      <button
-        className={`bg-${props.color_1} disabled:bg-stone-400 disabled:italic disabled:text-stone-300 hover:bg-${props.color_2} mt-0 inline rounded${props.size === defaultSize || props.size === undefined ? "" : "-" + props.size} px-${state.px} py-${state.py} text-white shadow-${props.size} mb-1 mr-1 leading-3`}
-        type={props.type}
-        onClick={props.onClick}
-        disabled={props.disabled}
+    <button
+      className={`bg-${color_1} disabled:bg-stone-400 disabled:italic disabled:text-stone-300 hover:bg-${color_2} mt-0 inline rounded${size === "md" ? "" : "-" + size} px-${state.px} py-${state.py} text-white shadow-${size} mb-1 mr-1 leading-3`}
+      type={props.type}
+      onClick={props.onClick}
+      disabled={props.disabled}
+    >
+      {props.iconId && (
+        <Icon
+          variant={iconVariant || "outline"}
+          id={props.iconId}
+          className={`mr-${props.children ? "1" : "0"} inline size-${state.size}`}
+        />
+      )}
+      <div
+        className={`text-${state.text} inline h-full align-middle font-bold`}
       >
-        {props.iconId && (
-          <Icon
-            variant={props.iconVariant || "outline"}
-            id={props.iconId}
-            className={`mr-${props.children ? "1" : "0"} inline size-${state.size}`}
-          />
-        )}
-        <div
-          className={`text-${state.text} inline h-full align-middle font-bold`}
-        >
-          {props.children}
-        </div>
-      </button>
-    </>
+        {props.children}
+      </div>
+    </button>
   );
 };
 

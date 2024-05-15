@@ -21,7 +21,7 @@ const Footer = (props: Props) => {
       )}
       <div className="container mx-auto flex items-center px-10 pb-8 text-sm text-stone-500">
         <div className="flex-auto">
-          <Link to={"/"} className="no-underline">
+          <Link to={"/admin"} className="no-underline">
             <Button
               color_1={props.color_1}
               color_2={props.color_2}

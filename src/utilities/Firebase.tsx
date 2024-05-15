@@ -7,6 +7,7 @@ import {
   QueryDocumentSnapshot,
   getDoc,
   getFirestore,
+  serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
 import { doc, getDocs, collection } from "firebase/firestore";
@@ -108,27 +109,37 @@ class Firebase {
     if (!snapshot.exists()) {
       return null;
     }
-    const data = { id: snapshot.id, ...snapshot.data() };
+    const data = { ...snapshot.data() };
     if (!data) return null;
     return data;
   };
 
-  getAllDocs = (coll: string) => {
-    const task = async () => {
-      const snapshot = await getDocs(collection(this.firestore, coll));
-      const data = snapshot.docs.map((doc) => doc.data());
-      return data;
-    };
-    return task();
+  getAllDocs = async <T extends DocumentData>(
+    coll: string,
+  ): Promise<T[] | null> => {
+    const collRef = this.createCollRef<T>(this.firestore, coll);
+    const snapshot = await getDocs(collRef);
+    if (snapshot.empty) {
+      return null;
+    }
+    const data = snapshot.docs.map((doc) => {
+      return doc.data();
+    });
+    return data;
   };
 
-  updateDocData = (coll: string, key: string | number, data: object) => {
-    const task = async () => {
-      const ref = doc(this.firestore, coll, key.toString());
-      const update = await updateDoc(ref, data);
-      return update;
-    };
-    return task();
+  updateDocData = async <T extends DocumentData>(
+    coll: string,
+    data: object,
+    id: string,
+  ) => {
+    try {
+      const docRef = this.createDocRef<T>(this.firestore, coll, id);
+      await updateDoc(docRef, { ...data, updated_at: serverTimestamp() });
+      return true;
+    } catch (error) {
+      throw new Error(`Error updating document with ID ${id}: ${error}`);
+    }
   };
 
   deleteDocData = (coll: string, key: string | number, data: object) => {

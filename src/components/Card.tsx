@@ -13,7 +13,7 @@ interface Props {
 
 const Card = ({ data }: Props) => {
   return (
-    <Link to={data?.action} className="group no-underline">
+    <Link to={data.action} className="group no-underline">
       <div className="not-prose overflow-hidden rounded-xl border-black/20 shadow-xl transition-transform delay-0 duration-200 ease-in-out group-hover:scale-105 group-hover:border-2 group-hover:shadow-2xl">
         <div className="min-h-28 bg-white p-6">
           <Icon
@@ -22,11 +22,11 @@ const Card = ({ data }: Props) => {
             className="-mt-1.5 mr-2 inline size-6 text-stone-600"
           />
           <h3 className="inline text-lg font-medium leading-6 text-stone-900">
-            {data?.title}
+            {data.title}
           </h3>
           <div className="mt-2">
             <p className="font-serif text-sm italic text-stone-500">
-              {data?.sub_title}
+              {data.sub_title}
             </p>
           </div>
         </div>
@@ -37,7 +37,7 @@ const Card = ({ data }: Props) => {
               variant={"solid"}
               id={"BoltIcon"}
             />
-            {data?.cta}
+            {data.cta}
           </div>
         </div>
       </div>
