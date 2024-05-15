@@ -10,6 +10,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 // import EditForm from "./components/EditForm.tsx";
 import updateAction from "./utilities/actions/updateAction.tsx";
 import EditForm from "./components/EditForm.tsx";
+import Login from "./pages/Login.tsx";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
         loader: async () => {
           return loaders.pageLoader({ coll: "pages", id: "home" });
         },
+      },
+      {
+        path: "/login",
+        element: <Login />,
       },
       {
         path: "/admin",

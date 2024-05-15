@@ -1,5 +1,11 @@
 import { FirebaseApp, initializeApp } from "firebase/app";
 import {
+  Auth,
+  GoogleAuthProvider,
+  getAuth,
+  signInWithPopup,
+} from "firebase/auth";
+import {
   CollectionReference,
   DocumentData,
   Firestore,
@@ -21,40 +27,33 @@ const config = {
   appId: "1:534268045988:web:0a0c206c29f2be80c89431",
   measurementId: "G-9S4JN1MJP7",
 };
-
-/**
- * Firbase class with multiple firebase functions.
- *
- * @class Firebase
- */
 class Firebase {
-  /**
-   * Firebase app.
-   *
-   * @private
-   * @type {FirebaseApp}
-   * @memberof Firebase
-   */
   private firebase: FirebaseApp;
 
-  /**
-   * Firebase firestore.
-   *
-   * @private
-   * @type {firebase.firestore.Firestore}
-   * @memberof Firebase
-   */
   private firestore: Firestore;
 
-  /**
-   * Creates an instance of Firebase.
-   *
-   * @memberof Firebase
-   */
+  public googleProvider: GoogleAuthProvider;
+
+  public auth: Auth;
+
   constructor() {
     this.firebase = initializeApp(config);
     this.firestore = getFirestore(this.firebase);
+    this.googleProvider = new GoogleAuthProvider();
+    this.auth = getAuth(this.firebase);
   }
+
+  signInWithGoogle = async () => {
+    try {
+      await signInWithPopup(this.auth, this.googleProvider);
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
+    }
+  };
+
+  googleLogout = () => {
+    this.auth.signOut();
+  };
 
   createFirestoreDataConverter = <
     T extends DocumentData,
@@ -93,13 +92,6 @@ class Firebase {
     );
   };
 
-  /**
-   * Gets page data
-   *
-   * @param {string} coll
-   * @param {string} id
-   * @memberof Firebase
-   */
   getDoc = async <T extends DocumentData>(
     coll: string,
     id: string,
@@ -142,14 +134,14 @@ class Firebase {
     }
   };
 
-  deleteDocData = (coll: string, key: string | number, data: object) => {
-    const task = async () => {
-      const ref = doc(this.firestore, coll, key.toString());
-      const del = await updateDoc(ref, data);
-      return del;
-    };
-    return task();
-  };
+  // deleteDocData = (coll: string, key: string | number, data: object) => {
+  //   const task = async () => {
+  //     const ref = doc(this.firestore, coll, key.toString());
+  //     const del = await updateDoc(ref, data);
+  //     return del;
+  //   };
+  //   return task();
+  // };
 }
 
 const firebase = new Firebase();
