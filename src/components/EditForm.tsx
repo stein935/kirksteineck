@@ -30,7 +30,7 @@ const EditForm = () => {
   }, [actionData]);
 
   return (
-    <div className="space-y-4 p-10">
+    <>
       <h1>{data.heading}</h1>
       <div className="space-y-8">
         <Form method="post" className="space-y-4 divide-y">
@@ -113,7 +113,7 @@ const EditForm = () => {
             })}
         </Form>
       </div>
-    </div>
+    </>
   );
 };
 export default EditForm;

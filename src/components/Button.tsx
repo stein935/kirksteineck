@@ -11,6 +11,7 @@ interface Props {
   disabled?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   children: string;
+  className?: string;
 }
 
 interface Size {
@@ -25,6 +26,7 @@ const Button = ({
   color_2 = "indigo-600",
   size = "md",
   iconVariant = "outline",
+  className = "mt-0 mb-1 mr-1",
   ...props
 }: Props) => {
   // const {color_1 = "indigo-500", color_2 = "indigo-600", size = "md", iconVariant = "outline", ...restProps } = props;
@@ -53,7 +55,7 @@ const Button = ({
   }, []);
   return (
     <button
-      className={`bg-${color_1} disabled:bg-stone-400 disabled:italic disabled:text-stone-300 hover:bg-${color_2} mt-0 inline rounded${size === "md" ? "" : "-" + size} px-${state.px} py-${state.py} text-white shadow-${size} mb-1 mr-1 leading-3`}
+      className={`bg-${color_1} disabled:bg-stone-400 disabled:italic disabled:text-stone-300 hover:bg-${color_2} inline rounded${size === "md" ? "" : "-" + size} px-${state.px} py-${state.py} text-white shadow-${size} leading-3 ${className}`}
       type={props.type}
       onClick={props.onClick}
       disabled={props.disabled}
