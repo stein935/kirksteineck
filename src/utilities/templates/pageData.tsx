@@ -1,6 +1,5 @@
 export interface PageData {
-  section: string;
-  formType: string;
+  title: string;
   fields?: {
     field: string;
     formType: string;
@@ -12,8 +11,7 @@ export interface PageData {
 
 const pageData: PageData[] = [
   {
-    section: "Headings",
-    formType: "fieldset",
+    title: "Headings",
     fields: [
       {
         field: "heading",
@@ -30,8 +28,7 @@ const pageData: PageData[] = [
     ],
   },
   {
-    section: "Design",
-    formType: "fieldset",
+    title: "Design",
     fields: [
       {
         field: "bg_pattern",
@@ -61,12 +58,10 @@ const pageData: PageData[] = [
     ],
   },
   {
-    section: "Content",
-    formType: "button",
+    title: "Content",
   },
   {
-    section: "Nav",
-    formType: "button",
+    title: "Nav",
   },
 ];
 

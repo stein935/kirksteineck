@@ -42,7 +42,7 @@ const Admin = () => {
                 {data.map((page) => {
                   return (
                     <NavLink
-                      to={`${page.title}/main`}
+                      to={`${page.title}/${params.area}`}
                       className={() =>
                         params.page === page.title
                           ? "not-prose bg-indigo-700"

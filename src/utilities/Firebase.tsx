@@ -19,13 +19,13 @@ import {
 import { doc, getDocs, collection } from "firebase/firestore";
 
 const config = {
-  apiKey: "AIzaSyDSA25vkFkmdS7y_7pB8sx9h7RlN18O48E",
-  authDomain: "kirk-steineck.firebaseapp.com",
-  projectId: "kirk-steineck",
-  storageBucket: "kirk-steineck.appspot.com",
-  messagingSenderId: "534268045988",
-  appId: "1:534268045988:web:0a0c206c29f2be80c89431",
-  measurementId: "G-9S4JN1MJP7",
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID,
+  measurementId: import.meta.env.VITE_MEASUREMENT_ID,
 };
 class Firebase {
   private firebase: FirebaseApp;
