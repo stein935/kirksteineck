@@ -5,12 +5,8 @@ import loaders from "./utilities/Loaders";
 import Base from "./pages/Base.tsx";
 import Root from "./pages/Root.tsx";
 import Admin from "./pages/Admin.tsx";
-// import Error from "./error.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-// import EditForm from "./components/EditForm.tsx";
-import updateAction from "./utilities/actions/updateAction.tsx";
 import EditForm from "./components/EditForm.tsx";
-import Login from "./pages/Login.tsx";
 
 const router = createBrowserRouter([
   {
@@ -25,20 +21,12 @@ const router = createBrowserRouter([
         },
       },
       {
-        path: "/login",
-        element: <Login />,
-      },
-      {
         path: "/admin",
         element: <Admin />,
         loader: async () => {
           return loaders.pagesLoader({ coll: "pages" });
         },
         children: [
-          {
-            path: "/admin/:page",
-            element: <>Not found</>,
-          },
           {
             path: "/admin/:page/:area",
             element: <EditForm />,
@@ -48,7 +36,6 @@ const router = createBrowserRouter([
                 id: params.page,
               });
             },
-            action: updateAction,
           },
         ],
       },

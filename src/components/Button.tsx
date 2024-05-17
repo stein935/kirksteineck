@@ -26,13 +26,8 @@ const Button = ({
   color_2 = "indigo-600",
   size = "md",
   iconVariant = "outline",
-  className = "mt-0 mb-1 mr-1",
   ...props
 }: Props) => {
-  // const {color_1 = "indigo-500", color_2 = "indigo-600", size = "md", iconVariant = "outline", ...restProps } = props;
-
-  // console.log(props);
-
   const buttonSize: { [key: string]: Size } = {
     xs: { px: "1.5", py: "1", size: "4", text: size },
     sm: { px: "2", py: "1.5", size: "5", text: size },
@@ -55,7 +50,7 @@ const Button = ({
   }, []);
   return (
     <button
-      className={`bg-${color_1} disabled:bg-stone-400 disabled:italic disabled:text-stone-300 hover:bg-${color_2} inline rounded${size === "md" ? "" : "-" + size} px-${state.px} py-${state.py} text-white shadow-${size} leading-3 ${className}`}
+      className={`bg-${color_1} mb-1 mr-1 mt-0 disabled:bg-stone-400 disabled:italic disabled:text-stone-300 hover:bg-${color_2} inline rounded${size === "md" ? "" : "-" + size} px-${state.px} py-${state.py} text-white shadow-${size} leading-3 ${props.className}`}
       type={props.type}
       onClick={props.onClick}
       disabled={props.disabled}

@@ -15,12 +15,14 @@ export interface Page {
 }
 
 export interface Content {
+  [key: string]: string | number;
   text: string;
   type: string;
   col: number;
 }
 
 export interface Nav {
+  [key: string]: string;
   action: string;
   cta: string;
   icon: string;

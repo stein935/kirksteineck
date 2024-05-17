@@ -1,61 +1,115 @@
-import {
-  Form,
-  NavLink,
-  useLoaderData,
-  useActionData,
-  useParams,
-} from "react-router-dom";
+import { NavLink, useLoaderData, useParams } from "react-router-dom";
 import { Elements } from "./form";
 import Button from "./Button";
-import { useState, useEffect } from "react";
-import { Content, Nav, Page } from "../utilities/Loaders";
-import pageData, { PageData } from "../utilities/templates/pageData";
+import {
+  ChangeEvent,
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
+import {
+  Content,
+  Nav,
+  // Nav,
+  Page,
+} from "../utilities/Loaders";
+import pageData from "../utilities/templates/pageData";
+import firebase from "../utilities/Firebase";
 
 const EditForm = () => {
   const data = useLoaderData() as Page;
   const params = useParams();
-  const area = params.area || "main";
-  const areaData =
-    area === "main"
-      ? (pageData as PageData[])
-      : area === "nav"
-        ? (data.nav as Nav[])
-        : area === "content"
-          ? (data.content as Content[])
-          : [];
-  const actionData = useActionData();
+  const [page, setPage]: [Page, Dispatch<SetStateAction<Page>>] = useState(
+    {} as Page,
+  );
+  const [nav, setNav]: [
+    { [key: string]: boolean },
+    Dispatch<SetStateAction<{ [key: string]: boolean }>>,
+  ] = useState({});
   const [disabled, setDisabled] = useState(true);
+
   useEffect(() => {
-    actionData && setDisabled(true);
-  }, [actionData]);
+    pageData.map((section) => {
+      setNav((prevState) => {
+        return {
+          ...prevState,
+          [section.title.toLowerCase()]:
+            params.area === section.title.toLowerCase() ? true : false,
+        };
+      });
+    });
+    setPage(data);
+  }, [params, data]);
+
+  const handleChange =
+    (index: number) =>
+    (
+      e: ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >,
+    ) => {
+      e.preventDefault();
+      setDisabled(false);
+      ["headings", "design"].includes(params.area as string)
+        ? setPage((prevState) => ({
+            ...prevState,
+            [e.target.name]: e.target.value,
+          }))
+        : params.area === "content"
+          ? setPage((prevState) => ({
+              ...prevState,
+              content: prevState.content.map((el) =>
+                prevState.content.indexOf(el) === index
+                  ? { ...el, [e.target.name]: e.target.value }
+                  : el,
+              ),
+            }))
+          : params.area === "nav"
+            ? setPage((prevState) => ({
+                ...prevState,
+                nav: prevState.nav.map((el) =>
+                  prevState.nav.indexOf(el) === index
+                    ? { ...el, [e.target.name]: e.target.value }
+                    : el,
+                ),
+              }))
+            : true;
+    };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setDisabled(true);
+    console.log(page);
+    await firebase.updateDocData("pages", page, params.page as string);
+  };
 
   return (
     <>
-      <h1>{data.heading}</h1>
+      <h1>{page.heading}</h1>
       <div className="space-y-8">
-        <Form method="post" className="space-y-4 divide-y">
+        <form className="space-y-4 divide-y" onSubmit={handleSubmit}>
           {pageData.map((section) => {
-            if (section.formType === "button") {
-              return (
-                <NavLink
-                  key={`${params.page}-${section.section}`}
-                  to={`/admin/${params.page}/${section.section.toLowerCase()}`}
-                  className="not-prose"
+            return (
+              <NavLink
+                key={`${page.title}-${section.title}`}
+                to={`/admin/${page.title}/${section.title.toLowerCase()}`}
+                className="not-prose"
+              >
+                <Button
+                  size="sm"
+                  type="button"
+                  className={
+                    params.area === section.title.toLowerCase()
+                      ? "bg-indigo-800"
+                      : undefined
+                  }
                 >
-                  <Button
-                    size="sm"
-                    type="button"
-                    color_1={
-                      params.area === section.section.toLowerCase()
-                        ? "indigo-700"
-                        : undefined
-                    }
-                  >
-                    {section.section}
-                  </Button>
-                </NavLink>
-              );
-            }
+                  {section.title}
+                </Button>
+              </NavLink>
+            );
           })}
           <Button
             disabled={disabled}
@@ -63,55 +117,105 @@ const EditForm = () => {
             size="sm"
             color_1="lime-600"
             color_2="lime-700"
+            onClick={handleSubmit}
           >
             save
           </Button>
-          {area === "main" &&
-            (areaData as PageData[]).map((section) => {
-              if (section.formType === "fieldset") {
-                return (
-                  <div
-                    key={section.section}
-                    className="grid grid-cols-1 gap-6 py-8"
-                  >
-                    <legend className="block text-2xl font-bold">
-                      {section.section}
-                    </legend>
-                    {section.fields?.map((field, index) => {
+          {pageData.map((section) => {
+            if (
+              section.title.toLowerCase() === params.area &&
+              nav[params.area]
+            ) {
+              return (
+                <div
+                  key={section.title}
+                  className="grid grid-cols-1 gap-6 py-8"
+                >
+                  <legend className="block text-2xl font-bold">
+                    {section.title}
+                  </legend>
+                  {section.fields &&
+                    section.fields.map((field, index) => {
                       return (
-                        field.formType === "input" && (
-                          <Elements.Input
-                            key={`${data.title}-${index}`}
-                            name={field.field}
-                            label={field.field}
-                            value={
-                              (data[field.field] as string) ||
-                              field.defaultValue
-                            }
-                            onChange={() => setDisabled(false)}
-                          />
-                        )
+                        <div
+                          key={`${page.title}-${params.area}-${field.field}`}
+                        >
+                          {field.formType === "input" && (
+                            <Elements.Input
+                              name={field.field}
+                              label={field.field}
+                              value={
+                                (page[field.field] as string) ||
+                                field.defaultValue
+                              }
+                              onChange={handleChange(index)}
+                            />
+                          )}
+                          {field.formType === "select" && (
+                            <Elements.Select
+                              name={field.field}
+                              label={field.field}
+                              value={
+                                (page[field.field] as string) ||
+                                field.defaultValue
+                              }
+                              options={field.options}
+                              onChange={handleChange(index)}
+                            />
+                          )}
+                        </div>
                       );
                     })}
-                  </div>
-                );
-              }
-            })}
-          {area === "content" &&
-            (areaData as Content[]).map((el, index) => {
-              if (["h1", "h2"].includes(el.type)) {
-                return (
-                  <Elements.Input
-                    key={`${data.title}-${index}`}
-                    name={JSON.stringify([el.type, el.text, index])}
-                    label={el.type}
-                    value={el.text}
-                    onChange={() => setDisabled(false)}
-                  />
-                );
-              }
-            })}
-        </Form>
+                  {params.area === "content" &&
+                    (page[params.area] as Content[]).map((field, index) => {
+                      return (
+                        <div key={`${page.title}-content-${index}`}>
+                          {["h1", "h2"].includes(field.type) && (
+                            <Elements.Input
+                              name="text"
+                              label={field.type}
+                              value={field.text}
+                              onChange={handleChange(index)}
+                            />
+                          )}
+                          {field.type === "body" && (
+                            <Elements.Textarea
+                              name="text"
+                              label={field.type}
+                              value={field.text}
+                              onChange={handleChange(index)}
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
+                  {params.area === "nav" && page[params.area].length > 0 ? (
+                    (page[params.area] as Nav[]).map((nav, index) => {
+                      return (
+                        <fieldset
+                          key={`${page.title}-nav-${index}`}
+                          className="my-4 border-l-2 border-indigo-800 pl-6"
+                        >
+                          {Object.keys(nav).map((key) => (
+                            <Elements.Input
+                              key={`${page.title}-nav-${index}-${key}`}
+                              name={key}
+                              label={key}
+                              value={nav[key]}
+                              onChange={handleChange(index)}
+                            />
+                          ))}
+                        </fieldset>
+                      );
+                    })
+                  ) : (
+                    <>Nuffin</>
+                  )}
+                </div>
+              );
+            }
+          })}
+        </form>
       </div>
     </>
   );
