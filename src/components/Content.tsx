@@ -20,7 +20,7 @@ const Content = ({ data, title }: Props) => {
           return (
             <div
               key={title + "-" + index}
-              className={`columns-1 gap-8 text-justify font-serif prose-p:mt-0 md:columns-${el.col} prose-p:whitespace-pre-line`}
+              className={`columns-1 gap-8 pb-8 text-justify font-serif prose-p:mt-0 md:columns-${el.col} prose-p:whitespace-pre-line`}
             >
               <p>{el.text}</p>
             </div>
